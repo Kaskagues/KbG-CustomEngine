@@ -17,10 +17,10 @@
 #define KG_MSSG_EMPTYFILE                   "Fitxategia utsik dago"
 #define KG_MSSG_FILEREAD                    "Fitxategiaren irakurketa buruta"
 
-#define KG_STEP_MOVE                        1.0f
-#define KG_STEP_ROTATE                      1.0f
+#define KG_STEP_MOVE                        0.25f
+#define KG_STEP_ROTATE                      0.25f
 #define KG_STEP_ZOOM                        0.75
-#define KG_STEP_CAMERA_ANGLE                5.0f
+#define KG_STEP_CAMERA_ANGLE                0.25f
 
 #define KG_ORTHO_X_MIN_INIT                -5
 #define KG_ORTHO_X_MAX_INIT                 5

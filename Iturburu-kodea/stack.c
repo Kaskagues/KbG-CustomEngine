@@ -26,6 +26,21 @@ GLdouble* matrix_multiplication(GLdouble* m1, GLdouble* m2){
     return emaitza;
 }
 
+void matrix_into_stack(GLdouble* m1,GLdouble* m2,stack* s,char aldaketa){
+    if (s->selected  < KG_STACK_MAX_SIZE-1) {
+        if (aldaketa=='g'){
+            s->matrizeak[++s->selected] = matrix_multiplication(m1,m2);
+        }
+        else if (aldaketa=='l'){
+            s->matrizeak[++s->selected] = matrix_multiplication(m2,m1);
+        }
+        ++s->upto;
+    }
+    else {
+        printf("Stack-aren kapazitate maximora heldu zara\n");
+    }
+}
+
 GLdouble* peak(stack* s){
     if (s->selected == 0){
         GLdouble* ident = malloc(sizeof(GLdouble)*16);
@@ -49,25 +64,17 @@ void redo(stack* s){
 void stack_add(stack *s, int code, char egoera, char aldaketa){
     GLdouble* m= malloc(sizeof(GLdouble)*16);
     switch (code) {
-    	case 101:
+    	case 101:   /*UP*/ 
             if (egoera == 'm'){
-                /*UP*/ 
                 console_add("Y+ mugitzen");
                 m[0] = m[5] = m[10] = m[15] = 1.;
                 m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
                 m[12] = 0.;
                 m[13] = KG_STEP_MOVE;
                 m[14] = 0.;
-                if (aldaketa=='g'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(peak(s),m);
-                }
-                else if (aldaketa=='l'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(m,peak(s));
-                }
-                ++s->upto;
+                matrix_into_stack(peak(s),m,s,aldaketa);
             }
             else if (egoera == 'b'){
-                /*UP*/
                 console_add("Y+ biratzen");
                 m[0] = m[5] = m[10] = m[15] = 1.;
                 m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
@@ -75,47 +82,27 @@ void stack_add(stack *s, int code, char egoera, char aldaketa){
                 m[6] = -sin(KG_STEP_ROTATE );
                 m[9] = sin(KG_STEP_ROTATE );
                 m[10] = cos(KG_STEP_ROTATE );
-                if (aldaketa=='g'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(peak(s),m);
-                }
-                else if (aldaketa=='l'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(m,peak(s));
-                }
-                ++s->upto;
+                matrix_into_stack(peak(s),m,s,aldaketa);
             }
             else if (egoera == 't'){
                 console_add("Y+ reeskalatzen");
                 m[0] = m[5] = m[10] = m[15] = 1.;
                 m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
                 m[0] = KG_STEP_ZOOM;
-                if (aldaketa=='g'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(peak(s),m);
-                }
-                else if (aldaketa=='l'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(m,peak(s));
-                }
-                ++s->upto;
+                matrix_into_stack(peak(s),m,s,aldaketa);
             }
             break;
-        case 103:
+        case 103:   /*DOWN*/
             if (egoera == 'm'){
-                /*DOWN*/
                 console_add("Y- mugitzen");
                 m[0] = m[5] = m[10] = m[15] = 1.;
                 m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
                 m[12] = 0;
                 m[13] = -KG_STEP_MOVE;
                 m[14] = 0.;
-                if (aldaketa=='g'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(peak(s),m);
-                }
-                else if (aldaketa=='l'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(m,peak(s));
-                }
-                ++s->upto;
+                matrix_into_stack(peak(s),m,s,aldaketa);
             }
             else if (egoera == 'b'){
-                /*DOWN*/
                 console_add("Y- biratzen");
                 m[0] = m[5] = m[10] = m[15] = 1.;
                 m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
@@ -123,47 +110,27 @@ void stack_add(stack *s, int code, char egoera, char aldaketa){
                 m[6] = sin(KG_STEP_ROTATE );
                 m[9] = -sin(KG_STEP_ROTATE );
                 m[10] = cos(KG_STEP_ROTATE );
-                if (aldaketa=='g'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(peak(s),m);
-                }
-                else if (aldaketa=='l'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(m,peak(s));
-                }
-                ++s->upto;
+                matrix_into_stack(peak(s),m,s,aldaketa);
             }
             else if (egoera == 't'){
                 console_add("Y- reeskalatzen");
                 m[0] = m[5] = m[10] = m[15] = 1.;
                 m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
                 m[0] = 1/KG_STEP_ZOOM;
-                if (aldaketa=='g'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(peak(s),m);
-                }
-                else if (aldaketa=='l'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(m,peak(s));
-                }
-                ++s->upto;
+                matrix_into_stack(peak(s),m,s,aldaketa);
             }
             break;
-        case 100:
+        case 100:   /*LEFT*/
             if (egoera == 'm'){
-                /*LEFT*/
                 console_add("X- mugitzen");
                 m[0] = m[5] = m[10] = m[15] = 1.;
                 m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
                 m[12] = -KG_STEP_MOVE;
                 m[13] = 0.;
                 m[14] = 0.;
-                if (aldaketa=='g'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(peak(s),m);
-                }
-                else if (aldaketa=='l'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(m,peak(s));
-                }
-                ++s->upto;
+                matrix_into_stack(peak(s),m,s,aldaketa);
             }
             else if (egoera == 'b'){
-                /*LEFT*/
                 console_add("X- biratzen");
                 m[0] = m[5] = m[10] = m[15] = 1.;
                 m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
@@ -171,47 +138,27 @@ void stack_add(stack *s, int code, char egoera, char aldaketa){
                 m[2] = sin(KG_STEP_ROTATE );
                 m[8] = -sin(KG_STEP_ROTATE );
                 m[10] = cos(KG_STEP_ROTATE );
-                if (aldaketa=='g'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(peak(s),m);
-                }
-                else if (aldaketa=='l'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(m,peak(s));
-                }
-                ++s->upto;
+                matrix_into_stack(peak(s),m,s,aldaketa);
             }
             else if (egoera == 't'){
                 console_add("X- reeskalatzen");
                 m[0] = m[5] = m[10] = m[15] = 1.;
                 m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
                 m[5] = KG_STEP_ZOOM;
-                if (aldaketa=='g'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(peak(s),m);
-                }
-                else if (aldaketa=='l'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(m,peak(s));
-                }
-                ++s->upto;
+                matrix_into_stack(peak(s),m,s,aldaketa);
             }
             break;
-        case 102:
+        case 102:   /*RIGHT*/
             if (egoera == 'm'){
-                /*RIGHT*/
                 console_add("X+ mugitzen");
                 m[0] = m[5] = m[10] = m[15] = 1.;
                 m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
                 m[12] = KG_STEP_MOVE;
                 m[13] = 0.;
                 m[14] = 0.;
-                if (aldaketa=='g'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(peak(s),m);
-                }
-                else if (aldaketa=='l'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(m,peak(s));
-                }
-                ++s->upto;
+                matrix_into_stack(peak(s),m,s,aldaketa);
             }
             else if (egoera == 'b'){
-                /*RIGHT*/
                 console_add("X+ biratzen");
                 m[0] = m[5] = m[10] = m[15] = 1.;
                 m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
@@ -219,47 +166,27 @@ void stack_add(stack *s, int code, char egoera, char aldaketa){
                 m[2] = -sin(KG_STEP_ROTATE );
                 m[8] = sin(KG_STEP_ROTATE );
                 m[10] = cos(KG_STEP_ROTATE );
-                if (aldaketa=='g'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(peak(s),m);
-                }
-                else if (aldaketa=='l'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(m,peak(s));
-                }
-                ++s->upto;
+                matrix_into_stack(peak(s),m,s,aldaketa);
             }
             else if (egoera == 't'){
                 console_add("X+ reeskalatzen");
                 m[0] = m[5] = m[10] = m[15] = 1.;
                 m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
                 m[5] = 1/KG_STEP_ZOOM;
-                if (aldaketa=='g'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(peak(s),m);
-                }
-                else if (aldaketa=='l'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(m,peak(s));
-                }
-                ++s->upto;
+                matrix_into_stack(peak(s),m,s,aldaketa);
             }
             break;
-        case 104:
+        case 104:   /*REpag*/
             if (egoera == 'm'){
-                /*REpag*/
                 console_add("Z+ mugitzen");
                 m[0] = m[5] = m[10] = m[15] = 1.;
                 m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
                 m[12] = 0;
                 m[13] = 0;
                 m[14] = +KG_STEP_MOVE;
-                if (aldaketa=='g'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(peak(s),m);
-                }
-                else if (aldaketa=='l'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(m,peak(s));
-                }
-                ++s->upto;
+                matrix_into_stack(peak(s),m,s,aldaketa);
             }
             else if (egoera == 'b'){
-                /*REpag*/
                 console_add("Z+ biratzen");
                 m[0] = m[5] = m[10] = m[15] = 1.;
                 m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
@@ -267,47 +194,27 @@ void stack_add(stack *s, int code, char egoera, char aldaketa){
                 m[1] = sin(KG_STEP_ROTATE );
                 m[4] = -sin(KG_STEP_ROTATE );
                 m[5] = cos(KG_STEP_ROTATE );
-                if (aldaketa=='g'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(peak(s),m);
-                }
-                else if (aldaketa=='l'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(m,peak(s));
-                }
-                ++s->upto;
+                matrix_into_stack(peak(s),m,s,aldaketa);
             }
             else if (egoera == 't'){
                 console_add("Z+ reeskalatzen");
                 m[0] = m[5] = m[10] = m[15] = 1.;
                 m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
                 m[10] = KG_STEP_ZOOM;
-                if (aldaketa=='g'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(peak(s),m);
-                }
-                else if (aldaketa=='l'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(m,peak(s));
-                }
-                ++s->upto;
+                matrix_into_stack(peak(s),m,s,aldaketa);
             }
             break;
-        case 105:
+        case 105:   /*AVpag*/
             if (egoera == 'm'){
-                /*AVpag*/
                 console_add("Z- mugitzen");
                 m[0] = m[5] = m[10] = m[15] = 1.;
                 m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
                 m[12] = 0.;
                 m[13] = 0.;
                 m[14] = -KG_STEP_MOVE;
-                if (aldaketa=='g'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(peak(s),m);
-                }
-                else if (aldaketa=='l'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(m,peak(s));
-                }
-                ++s->upto;
+                matrix_into_stack(peak(s),m,s,aldaketa);
             }
             else if (egoera == 'b'){
-                /*AVpag*/
                 console_add("Z- biratzen");
                 m[0] = m[5] = m[10] = m[15] = 1.;
                 m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
@@ -315,26 +222,14 @@ void stack_add(stack *s, int code, char egoera, char aldaketa){
                 m[1] = -sin(KG_STEP_ROTATE );
                 m[4] = sin(KG_STEP_ROTATE );
                 m[5] = cos(KG_STEP_ROTATE );
-                if (aldaketa=='g'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(peak(s),m);
-                }
-                else if (aldaketa=='l'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(m,peak(s));
-                }
-                ++s->upto;
+                matrix_into_stack(peak(s),m,s,aldaketa);
             }
             else if (egoera == 't'){
                 console_add("Z- reeskalatzen");
                 m[0] = m[5] = m[10] = m[15] = 1.;
                 m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
                 m[10] = 1/KG_STEP_ZOOM;
-                if (aldaketa=='g'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(peak(s),m);
-                }
-                else if (aldaketa=='l'){
-                    s->matrizeak[++s->selected] = matrix_multiplication(m,peak(s));
-                }
-                ++s->upto;
+                matrix_into_stack(peak(s),m,s,aldaketa);
             }
             break;
         case '+':
@@ -344,13 +239,7 @@ void stack_add(stack *s, int code, char egoera, char aldaketa){
             m[0] = 1/KG_STEP_ZOOM;
             m[5] = 1/KG_STEP_ZOOM;
             m[10] = 1/KG_STEP_ZOOM;
-            if (aldaketa=='g'){
-                s->matrizeak[++s->selected] = matrix_multiplication(peak(s),m);
-            }
-            else if (aldaketa=='l'){
-                s->matrizeak[++s->selected] = matrix_multiplication(m,peak(s));
-            }
-            ++s->upto;
+            matrix_into_stack(peak(s),m,s,aldaketa);
             break;
         case '-':
             console_add("Reeskalaketa- orokorra");
@@ -359,13 +248,7 @@ void stack_add(stack *s, int code, char egoera, char aldaketa){
             m[0] = KG_STEP_ZOOM;
             m[5] = KG_STEP_ZOOM;
             m[10] = KG_STEP_ZOOM;
-            if (aldaketa=='g'){
-                s->matrizeak[++s->selected] = matrix_multiplication(peak(s),m);
-            }
-            else if (aldaketa=='l'){
-                s->matrizeak[++s->selected] = matrix_multiplication(m,peak(s));
-            }
-            ++s->upto;
+            matrix_into_stack(peak(s),m,s,aldaketa);
             break;
         case 114:
             printf("Orain Z,Y,+,- Sakatu\n");

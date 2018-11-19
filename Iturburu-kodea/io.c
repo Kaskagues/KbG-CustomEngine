@@ -183,12 +183,16 @@ void keyboard(unsigned char key, int x, int y) {
         exit(0);
         break;
     case 26: /*CTRL + Z*/
-        console_add("Atzera egiten");
-        pop(_selected_object->s);
+        if (_selected_object != NULL){
+            console_add("Atzera egiten");
+            pop(_selected_object->s);
+        }
         break;
     case 25: /*CTRL + Y*/
-        console_add("Aurrera egiten");
-        redo(_selected_object->s);
+        if (_selected_object != NULL){
+            console_add("Aurrera egiten");
+            redo(_selected_object->s);
+        }
         break;
     case 114:
         console_add("Orain Z,Y,+,- Sakatu\n");
