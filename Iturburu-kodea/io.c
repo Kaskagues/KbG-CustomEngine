@@ -260,7 +260,7 @@ void keyboardSpecial(int key, int x, int y){
             }
         }
         else if (glutGetModifiers() != GLUT_ACTIVE_CTRL){
-            console_add("Aldaketa mota aukeratu (B/T/M)");
+            console_add("Aldaketa mota aukeratu (B/T/M/O)");
         }           
     default:
         /*In the default case we just print the code of the key. This is usefull to define new cases*/

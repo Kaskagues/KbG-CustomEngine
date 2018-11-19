@@ -294,10 +294,10 @@ void stack_add(stack *s, int code, char egoera, char aldaketa){
             matrix_into_stack(peak(s),m,s,aldaketa);
             break;
         case 114:
-            printf("Orain Z,Y,+,- Sakatu\n");
+            console_add("Orain Z,Y,+,- Sakatu");
             break;
         default:
-            printf("Stack-era sartzeko komandoa ez da identifikatu");
+            console_add("Stack-era sartzeko komandoa ez da identifikatu");
             break;
     }
 }
