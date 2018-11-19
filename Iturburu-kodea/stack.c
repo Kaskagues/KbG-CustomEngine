@@ -4,6 +4,7 @@
 #include <math.h>
 #include <GL/glut.h>
 #include "definitions.h"
+#include "console.h"
 
 stack* stack_initialization(){
     stack *s =(stack*) malloc(sizeof(stack));
@@ -75,7 +76,7 @@ void stack_add(stack *s, int code, char egoera, char aldaketa){
                 matrix_into_stack(peak(s),m,s,aldaketa);
             }
             else if (egoera == 'b'){
-                console_add("Y+ biratzen");
+                console_add("X+ biratzen");
                 m[0] = m[5] = m[10] = m[15] = 1.;
                 m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
                 m[5] = (cos(2*KG_STEP_ROTATE )+1)/(2*cos(KG_STEP_ROTATE ));
@@ -85,10 +86,17 @@ void stack_add(stack *s, int code, char egoera, char aldaketa){
                 matrix_into_stack(peak(s),m,s,aldaketa);
             }
             else if (egoera == 't'){
-                console_add("Y+ reeskalatzen");
+                console_add("Y- reeskalatzen");
                 m[0] = m[5] = m[10] = m[15] = 1.;
                 m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
                 m[0] = KG_STEP_ZOOM;
+                matrix_into_stack(peak(s),m,s,aldaketa);
+            }
+            else if(egoera == 'o'){
+                console_add("Y islatzen");
+                m[0] = m[5] = m[10] = m[15] = 1.;
+                m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
+                m[5] = -1;
                 matrix_into_stack(peak(s),m,s,aldaketa);
             }
             break;
@@ -103,7 +111,7 @@ void stack_add(stack *s, int code, char egoera, char aldaketa){
                 matrix_into_stack(peak(s),m,s,aldaketa);
             }
             else if (egoera == 'b'){
-                console_add("Y- biratzen");
+                console_add("X- biratzen");
                 m[0] = m[5] = m[10] = m[15] = 1.;
                 m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
                 m[5] = cos(KG_STEP_ROTATE );
@@ -113,10 +121,17 @@ void stack_add(stack *s, int code, char egoera, char aldaketa){
                 matrix_into_stack(peak(s),m,s,aldaketa);
             }
             else if (egoera == 't'){
-                console_add("Y- reeskalatzen");
+                console_add("Y+ reeskalatzen");
                 m[0] = m[5] = m[10] = m[15] = 1.;
                 m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
                 m[0] = 1/KG_STEP_ZOOM;
+                matrix_into_stack(peak(s),m,s,aldaketa);
+            }
+            else if(egoera == 'o'){
+                console_add("Y islatzen");
+                m[0] = m[5] = m[10] = m[15] = 1.;
+                m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
+                m[5] = -1;
                 matrix_into_stack(peak(s),m,s,aldaketa);
             }
             break;
@@ -131,7 +146,7 @@ void stack_add(stack *s, int code, char egoera, char aldaketa){
                 matrix_into_stack(peak(s),m,s,aldaketa);
             }
             else if (egoera == 'b'){
-                console_add("X- biratzen");
+                console_add("Y- biratzen");
                 m[0] = m[5] = m[10] = m[15] = 1.;
                 m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
                 m[0] = (cos(2*KG_STEP_ROTATE )+1)/(2*cos(KG_STEP_ROTATE ));
@@ -141,10 +156,17 @@ void stack_add(stack *s, int code, char egoera, char aldaketa){
                 matrix_into_stack(peak(s),m,s,aldaketa);
             }
             else if (egoera == 't'){
-                console_add("X- reeskalatzen");
+                console_add("X+ reeskalatzen");
                 m[0] = m[5] = m[10] = m[15] = 1.;
                 m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
                 m[5] = KG_STEP_ZOOM;
+                matrix_into_stack(peak(s),m,s,aldaketa);
+            }
+            else if(egoera == 'o'){
+                console_add("X islatzen");
+                m[0] = m[5] = m[10] = m[15] = 1.;
+                m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
+                m[0] = -1;
                 matrix_into_stack(peak(s),m,s,aldaketa);
             }
             break;
@@ -159,7 +181,7 @@ void stack_add(stack *s, int code, char egoera, char aldaketa){
                 matrix_into_stack(peak(s),m,s,aldaketa);
             }
             else if (egoera == 'b'){
-                console_add("X+ biratzen");
+                console_add("Y+ biratzen");
                 m[0] = m[5] = m[10] = m[15] = 1.;
                 m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
                 m[0] = cos(KG_STEP_ROTATE );
@@ -169,16 +191,23 @@ void stack_add(stack *s, int code, char egoera, char aldaketa){
                 matrix_into_stack(peak(s),m,s,aldaketa);
             }
             else if (egoera == 't'){
-                console_add("X+ reeskalatzen");
+                console_add("X- reeskalatzen");
                 m[0] = m[5] = m[10] = m[15] = 1.;
                 m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
                 m[5] = 1/KG_STEP_ZOOM;
                 matrix_into_stack(peak(s),m,s,aldaketa);
             }
+            else if(egoera == 'o'){
+                console_add("X islatzen");
+                m[0] = m[5] = m[10] = m[15] = 1.;
+                m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
+                m[0] = -1;
+                matrix_into_stack(peak(s),m,s,aldaketa);
+            }
             break;
         case 104:   /*REpag*/
             if (egoera == 'm'){
-                console_add("Z+ mugitzen");
+                console_add("Z- mugitzen");
                 m[0] = m[5] = m[10] = m[15] = 1.;
                 m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
                 m[12] = 0;
@@ -187,7 +216,7 @@ void stack_add(stack *s, int code, char egoera, char aldaketa){
                 matrix_into_stack(peak(s),m,s,aldaketa);
             }
             else if (egoera == 'b'){
-                console_add("Z+ biratzen");
+                console_add("Z- biratzen");
                 m[0] = m[5] = m[10] = m[15] = 1.;
                 m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
                 m[0] = cos(KG_STEP_ROTATE );
@@ -203,10 +232,17 @@ void stack_add(stack *s, int code, char egoera, char aldaketa){
                 m[10] = KG_STEP_ZOOM;
                 matrix_into_stack(peak(s),m,s,aldaketa);
             }
+            else if(egoera == 'o'){
+                console_add("Z islatzen");
+                m[0] = m[5] = m[10] = m[15] = 1.;
+                m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
+                m[10] = -1;
+                matrix_into_stack(peak(s),m,s,aldaketa);
+            }
             break;
         case 105:   /*AVpag*/
             if (egoera == 'm'){
-                console_add("Z- mugitzen");
+                console_add("Z+ mugitzen");
                 m[0] = m[5] = m[10] = m[15] = 1.;
                 m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
                 m[12] = 0.;
@@ -215,7 +251,7 @@ void stack_add(stack *s, int code, char egoera, char aldaketa){
                 matrix_into_stack(peak(s),m,s,aldaketa);
             }
             else if (egoera == 'b'){
-                console_add("Z- biratzen");
+                console_add("Z+ biratzen");
                 m[0] = m[5] = m[10] = m[15] = 1.;
                 m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
                 m[0] = (cos(2*KG_STEP_ROTATE )+1)/(2*cos(KG_STEP_ROTATE ));
@@ -229,6 +265,13 @@ void stack_add(stack *s, int code, char egoera, char aldaketa){
                 m[0] = m[5] = m[10] = m[15] = 1.;
                 m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
                 m[10] = 1/KG_STEP_ZOOM;
+                matrix_into_stack(peak(s),m,s,aldaketa);
+            }
+            else if(egoera == 'o'){
+                console_add("Z islatzen");
+                m[0] = m[5] = m[10] = m[15] = 1.;
+                m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
+                m[10] = -1;
                 matrix_into_stack(peak(s),m,s,aldaketa);
             }
             break;

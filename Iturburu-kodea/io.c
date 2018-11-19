@@ -150,7 +150,9 @@ void keyboard(unsigned char key, int x, int y) {
             _ortho_y_min = midy - he/2;
         }
         else{
-            stack_add(_selected_object->s,key,egoera,aldaketa);
+           	if (_selected_object != NULL){
+            	stack_add(_selected_object->s,key,egoera,aldaketa);
+            }
         }
         break;
 
@@ -170,7 +172,9 @@ void keyboard(unsigned char key, int x, int y) {
             _ortho_y_min = midy - he/2;
         }
         else{
-            stack_add(_selected_object->s,key,egoera,aldaketa);
+        	if (_selected_object != NULL){
+            	stack_add(_selected_object->s,key,egoera,aldaketa);
+            }
         }
         break;
 
@@ -216,6 +220,10 @@ void keyboard(unsigned char key, int x, int y) {
     case 'b':
         egoera = 'b';
         break;
+    case 'O':
+    case'o':
+    	egoera = 'o';
+    	break;
     default:
         /*In the default case we just print the code of the key. This is usefull to define new cases*/
         console_add("? sakatu laguntza ikusteko");
@@ -246,8 +254,10 @@ void keyboardSpecial(int key, int x, int y){
     case '+':
     case '-':
     case 114:
-        if((egoera=='b') || (egoera=='t') || (egoera=='m')){
-            stack_add(_selected_object->s,key,egoera,aldaketa);
+        if((egoera=='b') || (egoera=='t') || (egoera=='m') || (egoera=='o')){
+            if (_selected_object != NULL){
+            	stack_add(_selected_object->s,key,egoera,aldaketa);
+            }
         }
         else if (glutGetModifiers() != GLUT_ACTIVE_CTRL){
             console_add("Aldaketa mota aukeratu (B/T/M)");
@@ -260,4 +270,3 @@ void keyboardSpecial(int key, int x, int y){
     /*In case we have do any modification affecting the displaying of the object, we redraw them*/
     glutPostRedisplay();
 };
-
