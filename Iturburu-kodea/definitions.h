@@ -151,9 +151,22 @@ struct object3d{
     point3 max;                         /* coordinates' bigger bounds */
     struct object3d *next;              /* next element in the pile of objects */
     stack *s;
+    stack *kamara_s;
 };
 
 typedef struct object3d object3d;
+
+/****************************
+ * Structure to store a     *
+ * the camera settings      *
+ ****************************/
+struct kamara{
+    stack *mundu_kamara;                /*Kamara munduari begira dagoenerako*/
+    struct object3d *objektu_kamara;    /*Kamara objektu bat jarraitzen duenerako*/
+    int FOV;
+};
+
+typedef struct kamara kamara;
 
 #endif // DEFINITIONS_H
  

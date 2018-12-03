@@ -2,6 +2,9 @@
 #include <GL/glut.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
+#include <string.h>
+#include <stdio.h>
+#include <math.h>
 #include "console.h"
 #include "stack.h"
 
@@ -24,41 +27,45 @@ void printTestua(float x, float y,float z, char *string);
  */
 void draw_axes()
 {
-    char *c=0;
-    int min = 1;
-    int max = 9;
+    char buffer [100];
+    float steps = 0.25;
+    float min = 0;
+    float max = 9;
     /*Draw X axis*/
     glBegin(GL_LINES);
     glColor3f(KG_COL_X_AXIS_R,KG_COL_X_AXIS_G,KG_COL_X_AXIS_B);
     glVertex3d(0,0,0);
-    glVertex3d(_ortho_x_max/2,0,0);
+    max=_ortho_x_max*0.75;
+    glVertex3d(max,0,0);
     glEnd();
-	printTestua(_ortho_x_max/2,0,0,"X");
-    for(int i=min;i<=max;i++){
-        c=(i + '0');
-	    printTestua(i,0,0,&(c));
+	printTestua(max,0,0,"X");
+    for(float i=min;i<=max*0.9;i+=(max-min)*steps){
+        snprintf ( buffer, 100, "%.0e",i);
+	    printTestua(i,0,0,buffer);
     }
     /*Draw Y axis*/
     glBegin(GL_LINES);
     glColor3f(KG_COL_Y_AXIS_R,KG_COL_Y_AXIS_G,KG_COL_Y_AXIS_B);
     glVertex3d(0,0,0);
-    glVertex3d(0,_ortho_y_max/2,0);
+    max=_ortho_y_max*0.75;
+    glVertex3d(0,max,0);
     glEnd();
-	printTestua(0,_ortho_y_max/2,0,"Y");
-    for(int i=min;i<=max;i++){
-        c=(i + '0');
-	    printTestua(0,i,0,&(c));
+	printTestua(0,max,0,"Y");
+    for(float i=min;i<=max*0.9;i+=(max-min)*steps){
+        snprintf ( buffer, 100, "%.0e",i);
+	    printTestua(0,i,0,buffer);
     }
     /*Draw Z axis*/
     glBegin(GL_LINES);
     glColor3f(KG_COL_Z_AXIS_R,KG_COL_Z_AXIS_G,KG_COL_Z_AXIS_B);
     glVertex3d(0,0,0);
-    glVertex3d(0,0,_ortho_z_max/2);
+    max=_ortho_z_max*0.75;
+    glVertex3d(0,0,max);
     glEnd();
-	printTestua(0,0,_ortho_z_max/2,"Z");
-    for(int i=min;i<=max;i++){
-        c=(i + '0');
-	    printTestua(0,0,i,&(c));
+	printTestua(0,0,max,"Z");
+    for(float i=min;i<=max*0.9;i+=(max-min)*steps){
+        snprintf ( buffer, 100, "%.0e",i);
+	    printTestua(0,0,i,buffer);
     }
     
 }
@@ -194,8 +201,11 @@ void display(void) {
             }
             glEnd();
         }
+        //printTestua(0,-3,0,aux_obj->fitx_izena);
+
         aux_obj = aux_obj->next;
     }
+    
     /*Do the actual drawing*/
     glFlush();
 }

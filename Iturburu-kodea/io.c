@@ -2,6 +2,7 @@
 #include "load_obj.h"
 #include <GL/glut.h>
 #include <stdio.h>
+#include <string.h>
 #include "console.h"
 #include "stack.h"
 
