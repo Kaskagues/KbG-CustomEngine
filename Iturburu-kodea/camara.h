@@ -8,6 +8,8 @@ int camara_get_FOV();
 float camara_get_zNear();
 float camara_get_zFar();
 int camara_is_orthogonal();
+int camara_is_prespective();
+int camara_is_ibiltaria();
 void camara_zoom_in();
 void camara_zoom_out();
 stack* camara_get_stack();

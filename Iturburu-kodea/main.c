@@ -26,9 +26,14 @@ camara * _kamera=0;
 
 GLdouble * _m = 0;
 
+GLdouble* hasierako_puntua;
+
 /** GENERAL INITIALIZATION **/
 void initialization (){
-
+    hasierako_puntua = malloc(sizeof(GLdouble)*16);
+    hasierako_puntua[3] = hasierako_puntua[7] = hasierako_puntua[9] = hasierako_puntua[15] = 1.;
+    hasierako_puntua[0] = hasierako_puntua[1] = hasierako_puntua[4] = hasierako_puntua[5] = hasierako_puntua[6] = hasierako_puntua[8] = hasierako_puntua[10] = hasierako_puntua[11] = hasierako_puntua[12] = hasierako_puntua[13] = hasierako_puntua[14] = 0.;
+    hasierako_puntua[2] = 5;
     /*Initialization of all the variables with the default values*/
     _ortho_x_min = KG_ORTHO_X_MIN_INIT;
     _ortho_x_max = KG_ORTHO_X_MAX_INIT;

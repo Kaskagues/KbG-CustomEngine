@@ -213,7 +213,11 @@ void keyboard(unsigned char key, int x, int y) {
         }
         break;
     case 25: /*CTRL + Y*/
-        if (_selected_object != NULL){
+        if(kameraMode = 1){
+            console_add("Aurrera egiten");
+            redo(_kamera->world_camara);
+        }
+        else if (_selected_object != NULL){
             console_add("Aurrera egiten");
             redo(_selected_object->s);
         }

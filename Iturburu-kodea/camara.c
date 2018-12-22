@@ -36,7 +36,11 @@ void camara_alter_state(){
     if(camara_get_state()=='o'){
         console_add("Kamara perpesktiban");
         _kamera->state='p';
-    }else{
+    }else if(camara_get_state()=='p'){
+        console_add("Kamara ibiltaria");
+        _kamera->state='i';
+    }
+    else if(camara_get_state()=='i'){
         console_add("Kamara ortogonala");
         _kamera->state='o';
     }
@@ -71,6 +75,15 @@ float camara_get_zFar(){
 int camara_is_orthogonal(){
     return (_kamera->state=='o') ? 1 : 0;
 }
+
+int camara_is_prespective(){
+    return (_kamera->state=='p') ? 1 : 0;
+}
+
+int camara_is_ibiltaria(){
+    return (_kamera->state=='i') ? 1 : 0;
+}
+
 void camara_zoom_in(){
     if(camara_get_FOV()>KG_MIN_FOV){
         camara_set_FOV(camara_get_FOV()-KG_STEP_FOV);
