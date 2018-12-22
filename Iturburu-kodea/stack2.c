@@ -92,7 +92,7 @@ GLdouble* matrix_move(char axis, int direction){
     }
     return m;
 }
-GLdouble* matrix_rotate(char axis, int direction){
+/* GLdouble* matrix_rotate(char axis, int direction){
 
     char* msg = malloc(sizeof(char)*20);
     sprintf(msg,direction>0?"%c+ biratzen":"%c- biratzen",axis);
@@ -115,7 +115,7 @@ GLdouble* matrix_rotate(char axis, int direction){
             break;
     }
     return m;
-}
+} */
 void stack_add(stack *s, int code, char egoera, char aldaketa){
     GLdouble* m= malloc(sizeof(GLdouble)*16);
     switch (code) {
