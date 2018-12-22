@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "console.h"
+#include "camara.h"
 #include "stack.h"
 
 extern object3d * _first_object;
@@ -14,8 +15,10 @@ extern GLdouble _ortho_y_min,_ortho_y_max;
 extern GLdouble _ortho_z_min,_ortho_z_max;
 
 extern GLdouble *_m;
+extern camara* _kamera;
 
 char egoera = '*';
+char kameraMode = 0;
 char aldaketa = 'l';
 
 /**
@@ -138,17 +141,22 @@ void keyboard(unsigned char key, int x, int y) {
     case '-':
         if (glutGetModifiers() == GLUT_ACTIVE_CTRL){
             console_add("Zoom out");
-            /*Increase the projection plane; compute the new dimensions*/
-            wd=(_ortho_x_max-_ortho_x_min)/KG_STEP_ZOOM;
-            he=(_ortho_y_max-_ortho_y_min)/KG_STEP_ZOOM;
-            /*In order to avoid moving the center of the plane, we get its coordinates*/
-            midx = (_ortho_x_max+_ortho_x_min)/2;
-            midy = (_ortho_y_max+_ortho_y_min)/2;
-            /*The the new limits are set, keeping the center of the plane*/
-            _ortho_x_max = midx + wd/2;
-            _ortho_x_min = midx - wd/2;
-            _ortho_y_max = midy + he/2;
-            _ortho_y_min = midy - he/2;
+
+            if(camara_is_orthogonal()==1){
+                /*Increase the projection plane; compute the new dimensions*/
+                wd=(_ortho_x_max-_ortho_x_min)/KG_STEP_ZOOM;
+                he=(_ortho_y_max-_ortho_y_min)/KG_STEP_ZOOM;
+                /*In order to avoid moving the center of the plane, we get its coordinates*/
+                midx = (_ortho_x_max+_ortho_x_min)/2;
+                midy = (_ortho_y_max+_ortho_y_min)/2;
+                /*The the new limits are set, keeping the center of the plane*/
+                _ortho_x_max = midx + wd/2;
+                _ortho_x_min = midx - wd/2;
+                _ortho_y_max = midy + he/2;
+                _ortho_y_min = midy - he/2;
+            }else{
+                camara_zoom_out();
+            }
         }
         else{
            	if (_selected_object != NULL){
@@ -160,17 +168,22 @@ void keyboard(unsigned char key, int x, int y) {
     case '+':
         if (glutGetModifiers() == GLUT_ACTIVE_CTRL){
             console_add("Zoom in");
-            /*Increase the projection plane; compute the new dimensions*/
-            wd=(_ortho_x_max-_ortho_x_min)*KG_STEP_ZOOM;
-            he=(_ortho_y_max-_ortho_y_min)*KG_STEP_ZOOM;
-            /*In order to avoid moving the center of the plane, we get its coordinates*/
-            midx = (_ortho_x_max+_ortho_x_min)/2;
-            midy = (_ortho_y_max+_ortho_y_min)/2;
-            /*The the new limits are set, keeping the center of the plane*/
-            _ortho_x_max = midx + wd/2;
-            _ortho_x_min = midx - wd/2;
-            _ortho_y_max = midy + he/2;
-            _ortho_y_min = midy - he/2;
+
+            if(camara_is_orthogonal()==1){
+                /*Increase the projection plane; compute the new dimensions*/
+                wd=(_ortho_x_max-_ortho_x_min)*KG_STEP_ZOOM;
+                he=(_ortho_y_max-_ortho_y_min)*KG_STEP_ZOOM;
+                /*In order to avoid moving the center of the plane, we get its coordinates*/
+                midx = (_ortho_x_max+_ortho_x_min)/2;
+                midy = (_ortho_y_max+_ortho_y_min)/2;
+                /*The the new limits are set, keeping the center of the plane*/
+                _ortho_x_max = midx + wd/2;
+                _ortho_x_min = midx - wd/2;
+                _ortho_y_max = midy + he/2;
+                _ortho_y_min = midy - he/2;
+            }else{
+                camara_zoom_in();
+            }
         }
         else{
         	if (_selected_object != NULL){
@@ -187,6 +200,7 @@ void keyboard(unsigned char key, int x, int y) {
         console_add("Agur!");
         exit(0);
         break;
+
     case 26: /*CTRL + Z*/
         if (_selected_object != NULL){
             console_add("Atzera egiten");
@@ -220,11 +234,29 @@ void keyboard(unsigned char key, int x, int y) {
     case 'B':
     case 'b':
         egoera = 'b';
-        break;
+    	break;
     case 'O':
     case'o':
     	egoera = 'o';
     	break;
+
+    // Kamararen kontrolak------------------
+    case 'K':
+    case'k':
+        if(kameraMode==1){
+    	    kameraMode = 0;
+            console_add("Objektuak mugiarazten");
+        }else{
+    	    kameraMode = 1;
+            console_add("Kamara mugiarazten");
+        }
+    	break;
+    case 'C':
+    case'c':
+        camara_alter_state();
+    	break;
+
+    // -------------------------------------
     default:
         /*In the default case we just print the code of the key. This is usefull to define new cases*/
         console_add("? sakatu laguntza ikusteko");
@@ -241,13 +273,7 @@ void keyboardSpecial(int key, int x, int y){
 	switch (key) {
             
     case 101:
-        if (glutGetModifiers() == GLUT_ACTIVE_CTRL){
-            console_previousMezua();
-        }
     case 103:
-        if (glutGetModifiers() == GLUT_ACTIVE_CTRL){
-            console_nextMezua();
-        }
     case 100: 
     case 102:  
     case 104:
@@ -255,8 +281,22 @@ void keyboardSpecial(int key, int x, int y){
     case '+':
     case '-':
     case 114:
+        if(key==101){
+            if (glutGetModifiers() == GLUT_ACTIVE_CTRL){
+                console_previousMezua();
+            }
+        }
+        else if(key==103){
+            if (glutGetModifiers() == GLUT_ACTIVE_CTRL){
+                console_nextMezua();
+            }
+        }
         if((egoera=='b') || (egoera=='t') || (egoera=='m') || (egoera=='o')){
-            if (_selected_object != NULL){
+            //TODO Biraketa konprobatu
+            if (kameraMode == 1){
+            	stack_add(_kamera->world_camara,key,egoera,aldaketa);
+            }
+            else if (_selected_object != NULL){
             	stack_add(_selected_object->s,key,egoera,aldaketa);
             }
         }

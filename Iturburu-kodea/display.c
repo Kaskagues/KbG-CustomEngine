@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "console.h"
+#include "camara.h"
 #include "stack.h"
 
 /** EXTERNAL VARIABLES **/
@@ -81,15 +82,18 @@ void draw_floor(){
 			glVertex3f(-x,floor,z);
 
 			glColor3f(1.,1.,1.);
-			glVertex3f(x,floor,z);
 			glVertex3f(x,floor,-z);
-			
-			if(z<KG_FLOOR_SIZE-KG_FLOOR_STEPS){
+			glVertex3f(-x,floor,-z);
 
-				glColor3f(1.,1.,1.);
-				glVertex3f(x,floor,z+KG_FLOOR_STEPS);
-				glVertex3f(x,floor,-z);
-			}
+			glColor3f(1.,1.,1.);
+			glVertex3f(x,floor,-z);
+			glVertex3f(x,floor,z);
+
+            glColor3f(1.,1.,1.);
+			glVertex3f(-x,floor,-z);
+			glVertex3f(-x,floor,z);
+			
+			
 		}
 	}
 	glEnd();
@@ -109,16 +113,31 @@ void printTestua(float x, float y,float z, char *string)
 	}
 };
 void konsolaBistaratu(){
-    printTestua(_ortho_x_max*0.60,-_ortho_y_max*0.50,0,"Console______________");
-    int i =1;
     console_backupSet();
-    printTestua(_ortho_x_max*0.60,-_ortho_y_max+_ortho_y_max*0.05*i,0,console_thisMezua());
-    while(console_hasPrevious()==1 && i<8){
-        i++;
-        console_previousMezua();
-        printTestua(_ortho_x_max*0.60,-_ortho_y_max+_ortho_y_max*0.05*i,0,console_thisMezua());
+
+    if(camara_is_orthogonal()==1){
+        printTestua(-_ortho_x_max*1.5,-_ortho_y_max+_ortho_y_max*0.5,0,"Console______________");
+        int i =1;
+        printTestua(-_ortho_x_max*1.5,-_ortho_y_max+_ortho_y_max*0.05*i,0,console_thisMezua());
+        while(console_hasPrevious()==1 && i<8){
+            i++;
+            console_previousMezua();
+            printTestua(-_ortho_x_max*1.5,-_ortho_y_max+_ortho_y_max*0.05*i,0,console_thisMezua());
+        }
     }
+    else{
+        printTestua(-_ortho_x_max*1.5,-_ortho_y_max+_ortho_y_max*0.5,-KG_INITIAL_ZNEAR*10,"Console______________");
+        int i =1;
+        printTestua(-_ortho_x_max*1.5,-_ortho_y_max+_ortho_y_max*0.05*i,-KG_INITIAL_ZNEAR*10,console_thisMezua());
+        while(console_hasPrevious()==1 && i<8){
+            i++;
+            console_previousMezua();
+            printTestua(-_ortho_x_max*1.5,-_ortho_y_max+_ortho_y_max*0.05*i,-KG_INITIAL_ZNEAR*10,console_thisMezua());
+        }
+    }
+
     console_backupRestore();
+    
 }
 
 /**
@@ -155,14 +174,29 @@ void display(void) {
         /* Midpoint in the X axis */
         GLdouble midpt = (_ortho_x_min + _ortho_x_max) / 2;
         /*Definition of the projection*/
-        glOrtho(midpt - (wd / 2), midpt + (wd / 2), _ortho_y_min, _ortho_y_max, _ortho_z_min, _ortho_z_max);
+        if(camara_is_orthogonal()==1){
+            //Ortogonala
+            glOrtho(midpt - (wd / 2), midpt + (wd / 2), _ortho_y_min, _ortho_y_max, _ortho_z_min, _ortho_z_max);
+        }else{
+            //Perspektiba
+            glMultMatrixd(peak(camara_get_stack()));
+            gluPerspective(camara_get_FOV(),_window_ratio,camara_get_zNear(),camara_get_zFar());
+        }
+        
     } else {/* In the opposite situation we extend the Y axis */
         /* New height */
         GLdouble he = (_ortho_x_max - _ortho_x_min) / _window_ratio;
         /* Midpoint in the Y axis */
         GLdouble midpt = (_ortho_y_min + _ortho_y_max) / 2;
         /*Definition of the projection*/
-        glOrtho(_ortho_x_min, _ortho_x_max, midpt - (he / 2), midpt + (he / 2), _ortho_z_min, _ortho_z_max);
+        if(camara_is_orthogonal()==1){
+            //Ortogonala
+            glOrtho(_ortho_x_min, _ortho_x_max, midpt - (he / 2), midpt + (he / 2), _ortho_z_min, _ortho_z_max);
+        }else{
+            //Perspektiba
+            glMultMatrixd(peak(camara_get_stack()));
+            gluPerspective(camara_get_FOV(),_window_ratio,camara_get_zNear(),camara_get_zFar());
+        }        
     }
 
     /* Now we start drawing the object */
@@ -174,9 +208,6 @@ void display(void) {
 
 	/*Sorua marrazteko*/
 	draw_floor();
-
-	/*Konsola bat*/
-	konsolaBistaratu();
 
     /*Now each of the objects in the list*/
     while (aux_obj != 0) {
@@ -201,11 +232,17 @@ void display(void) {
             }
             glEnd();
         }
-        //printTestua(0,-3,0,aux_obj->fitx_izena);
+        printTestua(0,3,0,aux_obj->fitx_izena);
 
         aux_obj = aux_obj->next;
     }
-    
+
+    /*Konsola bat*/
+    glLoadIdentity();
+    konsolaBistaratu();
+
     /*Do the actual drawing*/
     glFlush();
+
+
 }

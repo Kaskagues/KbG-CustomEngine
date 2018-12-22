@@ -6,6 +6,7 @@
 #include "io.h"
 #include "definitions.h"
 #include "console.h"
+#include "camara.h"
 
 //gcc -o KbGprograma *.c -lGL -lGLU -lglut
 //./KbGprograma
@@ -21,6 +22,7 @@ object3d * _first_object= 0;                /*List of objects*/
 object3d * _selected_object = 0;            /*Object currently selected*/
 
 console *_kontsola=0;
+camara * _kamera=0;
 
 GLdouble * _m = 0;
 
@@ -43,8 +45,10 @@ void initialization (){
     /*Definition of the method to draw the objects*/
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-    //Matrizeen 
+    //Kamara
+    camara_initialization();
 
+    //Matrizeen 
     _m =malloc(sizeof(GLdouble)*16);
     _m[0] =_m[5] =_m[10] =_m[15] = 1.;
     _m[1] =_m[2] =_m[3] =_m[4] =_m[6] =_m[7] =_m[8] =_m[9] =_m[11] =_m[12] =_m[13] =_m[14] = 0.;

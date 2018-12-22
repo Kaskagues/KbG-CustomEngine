@@ -19,8 +19,15 @@
 
 #define KG_STEP_MOVE                        0.25f
 #define KG_STEP_ROTATE                      0.25f
-#define KG_STEP_ZOOM                        0.75
+#define KG_STEP_ZOOM                        0.75f
 #define KG_STEP_CAMERA_ANGLE                0.25f
+#define KG_INITIAL_ZNEAR                    0.1f
+#define KG_INITIAL_ZFAR                     100.f
+#define KG_INITIAL_FOV                      100.f
+#define KG_MIN_FOV                          45.f
+#define KG_MAX_FOV                          135.f
+#define KG_STEP_FOV                         5.f
+#define KG_INITIAL_STATE                    'o'
 
 #define KG_ORTHO_X_MIN_INIT                -5
 #define KG_ORTHO_X_MAX_INIT                 5
@@ -55,7 +62,7 @@
 #define KG_COL_Z_AXIS_B                     0.0f
 
 #define KG_FLOOR_SIZE			            100
-#define KG_FLOOR_STEPS			            5
+#define KG_FLOOR_STEPS			            10
 
 #define KG_MAX_DOUBLE                       10E25
               
@@ -160,13 +167,16 @@ typedef struct object3d object3d;
  * Structure to store a     *
  * the camera settings      *
  ****************************/
-struct kamara{
-    stack *mundu_kamara;                /*Kamara munduari begira dagoenerako*/
+struct camara{
+    stack *world_camara;                /*Kamara munduari begira dagoenerako*/
     struct object3d *objektu_kamara;    /*Kamara objektu bat jarraitzen duenerako*/
     int FOV;
+    int zNear;
+    int zFar;
+    char state;
 };
 
-typedef struct kamara kamara;
+typedef struct camara camara;
 
 #endif // DEFINITIONS_H
  
