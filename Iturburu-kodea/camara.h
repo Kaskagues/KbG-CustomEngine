@@ -11,6 +11,6 @@ int camara_is_orthogonal();
 void camara_zoom_in();
 void camara_zoom_out();
 stack* camara_get_stack();
-void camara_move(char key, char egoera, char aldaketa);
+void camara_move(int key, char egoera, char aldaketa);
 
 #endif // CAMARA_H

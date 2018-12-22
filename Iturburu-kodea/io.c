@@ -25,6 +25,7 @@ char aldaketa = 'l';
  * @brief This function just prints information about the use
  * of the keys
  */
+
 void print_help(){
     console_add("KbG Irakasgaiaren Praktika. Programa honek 3D objektuak");
     console_add("aldatzen eta bistaratzen ditu.");
@@ -47,7 +48,7 @@ void print_help(){
  * @param key Key that has been pressed
  * @param x X coordinate of the mouse pointer when the key was pressed
  * @param y Y coordinate of the mouse pointer when the key was pressed
- */
+*/
 
 void keyboard(unsigned char key, int x, int y) {
     char* fname = malloc(sizeof (char)*128); /* Note that scanf adds a null character at the end of the vector*/
@@ -202,7 +203,11 @@ void keyboard(unsigned char key, int x, int y) {
         break;
 
     case 26: /*CTRL + Z*/
-        if (_selected_object != NULL){
+        if(kameraMode = 1){
+            console_add("Atzera egiten");
+            pop(_kamera->world_camara);
+        }
+        else if (_selected_object != NULL){
             console_add("Atzera egiten");
             pop(_selected_object->s);
         }
@@ -294,7 +299,7 @@ void keyboardSpecial(int key, int x, int y){
         if((egoera=='b') || (egoera=='t') || (egoera=='m') || (egoera=='o')){
             //TODO Biraketa konprobatu
             if (kameraMode == 1){
-            	stack_add(_kamera->world_camara,key,egoera,aldaketa);
+            	camara_move(key,egoera,aldaketa);
             }
             else if (_selected_object != NULL){
             	stack_add(_selected_object->s,key,egoera,aldaketa);
