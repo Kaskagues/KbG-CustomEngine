@@ -203,23 +203,28 @@ void keyboard(unsigned char key, int x, int y) {
         break;
 
     case 26: /*CTRL + Z*/
-        if(kameraMode = 1){
-            console_add("Atzera egiten");
-            pop(camara_get_stack());
+        if(glutGetModifiers() == GLUT_ACTIVE_CTRL){
+            if(kameraMode = 1){
+                console_add("Atzera egiten");
+                pop(camara_get_stack());
+            }
+            else if (_selected_object != NULL){
+                console_add("Atzera egiten");
+                pop(_selected_object->s);
+            }
         }
-        else if (_selected_object != NULL){
-            console_add("Atzera egiten");
-            pop(_selected_object->s);
-        }
+        
         break;
     case 25: /*CTRL + Y*/
-        if(kameraMode = 1){
-            console_add("Aurrera egiten");
-            redo(camara_get_stack());
-        }
-        else if (_selected_object != NULL){
-            console_add("Aurrera egiten");
-            redo(_selected_object->s);
+        if(glutGetModifiers() == GLUT_ACTIVE_CTRL){
+            if(kameraMode = 1){
+                console_add("Aurrera egiten");
+                redo(camara_get_stack());
+            }
+            else if (_selected_object != NULL){
+                console_add("Aurrera egiten");
+                redo(_selected_object->s);
+            }
         }
         break;
     case 114:

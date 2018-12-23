@@ -209,45 +209,51 @@ printf("2 pasada\n");
     printf("3 pasada\n");
 
     vertex p0,p1,p2;
-    vector3 a; //= (vector3) malloc(sizeof (vector3));
-    vector3 b;// = (vector3) malloc(sizeof (vector3));
-    vector3 normal;// = (vector3) malloc(sizeof (vector3));
-    GLdouble modulua;// = (GLdouble) malloc(sizeof (GLdouble));
 
-    for (i = 1; i < object_ptr->num_faces; i++)
+    vector3* a = (vector3*) malloc(sizeof (vector3));
+    vector3* b = (vector3*) malloc(sizeof (vector3));
+    vector3* normal = (vector3*) malloc(sizeof (vector3));
+
+    GLdouble modulua;
+
+    for (i = 0; i < object_ptr->num_faces; i++)
     {
         //Beti dituzte 3 erpin gutxienez, beraz 
         //verte_table[2]-raino ailegatuko da beti
-
-        p0 = vertex_table[face_table[i].vertex_table[1]];
-        p1 = vertex_table[face_table[i].vertex_table[2]];
-        p2 = vertex_table[face_table[i].vertex_table[3]];
+        p0 = vertex_table[face_table[i].vertex_table[0]];
+        p1 = vertex_table[face_table[i].vertex_table[1]];
+        p2 = vertex_table[face_table[i].vertex_table[2]];
 
         //a = vertex1-vertex0
-        a.x = p1.coord.x - p0.coord.x;
-        a.y = p1.coord.y - p0.coord.y;
-        a.z = p1.coord.z - p0.coord.z;
+        a->x = p1.coord.x - p0.coord.x;
+        a->y = p1.coord.y - p0.coord.y;
+        a->z = p1.coord.z - p0.coord.z;
 
         //b = vertex2-vertex0
-        b.x = p2.coord.x - p0.coord.x;
-        b.y = p2.coord.y - p0.coord.y;
-        b.z = p2.coord.z - p0.coord.z;
+        b->x = p2.coord.x - p0.coord.x;
+        b->y = p2.coord.y - p0.coord.y;
+        b->z = p2.coord.z - p0.coord.z;
 
         //Normala axb
-        normal.x = a.y*b.z - a.z*b.y;
-        normal.y = a.z*b.x - a.x*b.z;
-        normal.z = a.x*b.y - a.y*b.x;
+        normal->x = a->y*b->z - a->z*b->y;
+        normal->y = a->z*b->x - a->x*b->z;
+        normal->z = a->x*b->y - a->y*b->x;
 
         //Normala unitarioa egiteko *1/|axb|
-        modulua = sqrt(normal.x*normal.x + normal.y*normal.y + normal.z*normal.z);
+        modulua = sqrt(normal->x*normal->x + normal->y*normal->y + normal->z*normal->z);
 
-        normal.x /= modulua;
-        normal.y /= modulua;
-        normal.z /= modulua;
+        normal->x /= modulua;
+        normal->y /= modulua;
+        normal->z /= modulua;
 
         //Gorde tablan
-        normal_table[i] = normal;
+        normal_table[i].x = normal->x;
+        normal_table[i].y = normal->y;
+        normal_table[i].z = normal->z;
     }
+    
+    object_ptr->normal_table = normal_table;
+
     return (0);
 }
 

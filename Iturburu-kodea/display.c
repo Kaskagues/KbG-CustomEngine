@@ -150,6 +150,39 @@ void reshape(int width, int height) {
     _window_ratio = (GLdouble) width / (GLdouble) height;
 }
 
+void lights(){
+    GLfloat horia[4] = {0.0, 1.0, 1.0, 1.0};
+    GLfloat grisa[4] = {0.2, 0.2, 0.2, 1.0};
+    GLfloat txuria[4] = {0.0, 0.0, 0.0, 1.0};
+
+    char mota='e';
+    if(mota=='b'){
+        GLfloat kokapena[4]= {0.0, 10.0, 0.0, 1.0};
+        glLightfv(GL_LIGHT0, GL_POSITION, kokapena);
+        glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 180.0);
+    }
+    else if(mota=='e'){
+        GLfloat norabidea[4]= {1.0, 0.0, 0.0, 0.0};
+        glLightfv(GL_LIGHT0, GL_POSITION, norabidea);
+    }
+    else if(mota=='f'){
+        GLfloat kokapena[4]= {0.0, 10.0, 0.0, 1.0};
+        GLfloat norabidea[4]= {1.0, 0.0, 0.0, 0.0};
+        glLightfv(GL_LIGHT0, GL_POSITION, kokapena);
+        glLightfv(GL_LIGHT0, GL_SPOT_DIRECTION, norabidea);
+        glLightf(GL_LIGHT0, GL_SPOT_CUTOFF, 20.0);
+        glLightf(GL_LIGHT0, GL_SPOT_EXPONENT, 1.0);
+        
+    }
+    /* glLightfv(GL_LIGHT0, GL_AMBIENT, grisa);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, horia);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, txuria);
+
+    glLightf(GL_LIGHT0, GL_CONSTANT_ATTENUATION, 1.0);
+    glLightf(GL_LIGHT0, GL_LINEAR_ATTENUATION, 0.0);
+    glLightf(GL_LIGHT0, GL_QUADRATIC_ATTENUATION, 1.0); */
+
+}
 
 /**
  * @brief Callback display function
@@ -159,7 +192,7 @@ void display(void) {
     object3d *aux_obj = _first_object;
     GLdouble* egungo_bista = malloc(sizeof (GLdouble)*16);
     /* Clear the screen */
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     /* Define the projection */
     glMatrixMode(GL_PROJECTION);
@@ -208,6 +241,7 @@ void display(void) {
         gluLookAt(egungo_bista[0],egungo_bista[1],egungo_bista[2],egungo_bista[4],egungo_bista[5],egungo_bista[6],egungo_bista[8],egungo_bista[9],egungo_bista[10]);
     }
 
+    //lights();
     /*First, we draw the axes*/
     draw_axes();
 
@@ -230,17 +264,22 @@ void display(void) {
         }
         glMultMatrixd(peak(aux_obj->s));
         for (f = 0; f < aux_obj->num_faces; f++) {
-            glBegin(GL_POLYGON);
+            glBegin(GL_POLYGON);  
             for (v = 0; v < aux_obj->face_table[f].num_vertices; v++) {
                 v_index = aux_obj->face_table[f].vertex_table[v];
+                glNormal3d(aux_obj->normal_table[f].x,
+                                aux_obj->normal_table[f].y,
+                                aux_obj->normal_table[f].z);
                 glVertex3d(aux_obj->vertex_table[v_index].coord.x,
                         aux_obj->vertex_table[v_index].coord.y,
                         aux_obj->vertex_table[v_index].coord.z);
-
+                
             }
             glEnd();
         }
-        printTestua(0,3,0,aux_obj->fitx_izena);
+        char* msg = malloc(sizeof(char)*30);
+        sprintf(msg,"%s, %d polygons",aux_obj->fitx_izena,aux_obj->num_faces);
+        printTestua(0,aux_obj->max.y+1,0,msg);
 
         aux_obj = aux_obj->next;
     }
