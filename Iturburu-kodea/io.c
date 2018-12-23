@@ -205,7 +205,7 @@ void keyboard(unsigned char key, int x, int y) {
     case 26: /*CTRL + Z*/
         if(kameraMode = 1){
             console_add("Atzera egiten");
-            pop(_kamera->world_camara);
+            pop(camara_get_stack());
         }
         else if (_selected_object != NULL){
             console_add("Atzera egiten");
@@ -215,7 +215,7 @@ void keyboard(unsigned char key, int x, int y) {
     case 25: /*CTRL + Y*/
         if(kameraMode = 1){
             console_add("Aurrera egiten");
-            redo(_kamera->world_camara);
+            redo(camara_get_stack());
         }
         else if (_selected_object != NULL){
             console_add("Aurrera egiten");

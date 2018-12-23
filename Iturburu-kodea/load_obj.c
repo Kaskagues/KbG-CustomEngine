@@ -12,6 +12,7 @@
 #include <malloc.h>
 #include "definitions.h"
 #include "stack.h"
+#include "math.h"
 
 #define MAXLINE 200
 
@@ -50,6 +51,7 @@ printf("%d numbers in the line\n",kont);
 int read_wavefront(char * file_name, object3d * object_ptr) {
     vertex *vertex_table;
     face *face_table;
+    vector3 *normal_table;
     int num_vertices = -1, num_faces = -1, count_vertices = 0, count_faces = 0;
     FILE *obj_file;
     char line[MAXLINE], line_1[MAXLINE], aux[45];
@@ -113,6 +115,7 @@ printf("1 pasada: num vert = %d (%d), num faces = %d(%d) \n",num_vertices,count_
 
     vertex_table = (vertex *) malloc(num_vertices * sizeof (vertex));
     face_table = (face *) malloc(num_faces * sizeof (face));
+    normal_table = (vector3 *) malloc(num_faces * sizeof (vector3));
 
     obj_file = fopen(file_name, "r");
     k = 0;
@@ -125,15 +128,15 @@ printf("1 pasada: num vert = %d (%d), num faces = %d(%d) \n",num_vertices,count_
         switch (line[0]) {
             case 'v':
             if (line[1] == ' ')  // vn not interested
-		{
+		    {
                 sscanf(line + 2, "%lf%lf%lf", &(vertex_table[k].coord.x),
                         &(vertex_table[k].coord.y), &(vertex_table[k].coord.z));
                 k++;
-		}
+		    }
                break;
 
             case 'f':
-	    if (line[1] == ' ') // fn not interested
+	            if (line[1] == ' ') // fn not interested
                 {
                 for (i = 2; i <= (int) strlen(line); i++)
                     line_1[i - 2] = line[i];
@@ -168,6 +171,7 @@ printf("2 pasada\n");
    	izena = strrchr(file_name, (int)'/');
 	strcpy(izena,izena+1);
     object_ptr->fitx_izena = izena;
+
     stack_initialization(object_ptr->s);
 
 
@@ -199,7 +203,50 @@ printf("2 pasada\n");
 
         if (object_ptr->vertex_table[i].coord.z > object_ptr->max.z)
             object_ptr->max.z = object_ptr->vertex_table[i].coord.z;
+    
+    }
 
+    printf("3 pasada\n");
+
+    vertex p0,p1,p2;
+    vector3 a; //= (vector3) malloc(sizeof (vector3));
+    vector3 b;// = (vector3) malloc(sizeof (vector3));
+    vector3 normal;// = (vector3) malloc(sizeof (vector3));
+    GLdouble modulua;// = (GLdouble) malloc(sizeof (GLdouble));
+
+    for (i = 1; i < object_ptr->num_faces; i++)
+    {
+        //Beti dituzte 3 erpin gutxienez, beraz 
+        //verte_table[2]-raino ailegatuko da beti
+
+        p0 = vertex_table[face_table[i].vertex_table[1]];
+        p1 = vertex_table[face_table[i].vertex_table[2]];
+        p2 = vertex_table[face_table[i].vertex_table[3]];
+
+        //a = vertex1-vertex0
+        a.x = p1.coord.x - p0.coord.x;
+        a.y = p1.coord.y - p0.coord.y;
+        a.z = p1.coord.z - p0.coord.z;
+
+        //b = vertex2-vertex0
+        b.x = p2.coord.x - p0.coord.x;
+        b.y = p2.coord.y - p0.coord.y;
+        b.z = p2.coord.z - p0.coord.z;
+
+        //Normala axb
+        normal.x = a.y*b.z - a.z*b.y;
+        normal.y = a.z*b.x - a.x*b.z;
+        normal.z = a.x*b.y - a.y*b.x;
+
+        //Normala unitarioa egiteko *1/|axb|
+        modulua = sqrt(normal.x*normal.x + normal.y*normal.y + normal.z*normal.z);
+
+        normal.x /= modulua;
+        normal.y /= modulua;
+        normal.z /= modulua;
+
+        //Gorde tablan
+        normal_table[i] = normal;
     }
     return (0);
 }
