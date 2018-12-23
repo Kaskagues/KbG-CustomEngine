@@ -168,6 +168,7 @@ typedef struct object3d object3d;
  * the camera settings      *
  ****************************/
 struct camara{
+    stack *perspective;                //Kamara munduari 
     stack *world_camara;                /*Kamara munduari begira dagoenerako*/
     struct object3d *objektu_kamara;    /*Kamara objektu bat jarraitzen duenerako*/
     int FOV;

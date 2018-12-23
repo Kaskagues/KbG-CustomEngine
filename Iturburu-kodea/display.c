@@ -48,7 +48,6 @@ void draw_axes()
     glBegin(GL_LINES);
     glColor3f(KG_COL_Y_AXIS_R,KG_COL_Y_AXIS_G,KG_COL_Y_AXIS_B);
     glVertex3d(0,0,0);
-    max=_ortho_y_max*0.75;
     glVertex3d(0,max,0);
     glEnd();
 	printTestua(0,max,0,"Y");
@@ -60,7 +59,6 @@ void draw_axes()
     glBegin(GL_LINES);
     glColor3f(KG_COL_Z_AXIS_R,KG_COL_Z_AXIS_G,KG_COL_Z_AXIS_B);
     glVertex3d(0,0,0);
-    max=_ortho_z_max*0.75;
     glVertex3d(0,0,max);
     glEnd();
 	printTestua(0,0,max,"Z");

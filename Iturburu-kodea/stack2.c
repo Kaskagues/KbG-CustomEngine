@@ -5,6 +5,7 @@
 #include <GL/glut.h>
 #include "definitions.h"
 #include "console.h"
+#include "camara.h"
 
 extern char kam_egoera;
 
