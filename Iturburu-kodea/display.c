@@ -210,9 +210,7 @@ void display(void) {
             glOrtho(midpt - (wd / 2), midpt + (wd / 2), _ortho_y_min, _ortho_y_max, _ortho_z_min, _ortho_z_max);
         }else{
             //Perspektiba
-            //glMultMatrixd(peak(camara_get_stack()));
             gluPerspective(camara_get_FOV(),_window_ratio,camara_get_zNear(),camara_get_zFar());
-            egungo_bista = matrix_multiplication(hasierako_puntua,peak(camara_get_stack()));
         }
         
     } else {/* In the opposite situation we extend the Y axis */
@@ -226,11 +224,7 @@ void display(void) {
             glOrtho(_ortho_x_min, _ortho_x_max, midpt - (he / 2), midpt + (he / 2), _ortho_z_min, _ortho_z_max);
         }else{
             //Perspektiba
-            //glMultMatrixd(peak(camara_get_stack()));
             gluPerspective(camara_get_FOV(),_window_ratio,camara_get_zNear(),camara_get_zFar());
-            egungo_bista = matrix_multiplication(hasierako_puntua,peak(camara_get_stack()));
-
-
         }        
     }
 
@@ -238,11 +232,14 @@ void display(void) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     if(camara_is_orthogonal()!=1){
+        egungo_bista = matrix_multiplication(hasierako_puntua,peak(camara_get_stack()));
+        //glMultMatrixd(peak(camara_get_stack()));
         gluLookAt(egungo_bista[0],egungo_bista[1],egungo_bista[2],egungo_bista[4],egungo_bista[5],egungo_bista[6],egungo_bista[8],egungo_bista[9],egungo_bista[10]);
     }
 
     //lights();
     /*First, we draw the axes*/
+    glLoadIdentity();
     draw_axes();
 
 	/*Sorua marrazteko*/
