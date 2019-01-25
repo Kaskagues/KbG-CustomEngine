@@ -8,7 +8,7 @@
 #include "console.h"
 #include "camara.h"
 
-//gcc -o KbGprograma *.c -lGL -lGLU -lglut
+//gcc -o KbGprograma *.c -lGL -lGLU -lm -lglut
 //./KbGprograma
 
 /** GLOBAL VARIABLES **/

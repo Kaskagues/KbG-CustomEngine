@@ -7,14 +7,13 @@
 #include "console.h"
 #include "camara.h"
 
-extern char kam_egoera;
-
 stack* stack_initialization(){
     stack *s =(stack*) malloc(sizeof(stack));
     s->selected = 0;
     s->matrizeak[KG_STACK_MAX_SIZE];
     return s;
 };
+
 GLdouble* matrix_multiplication(GLdouble* m1, GLdouble* m2){
     GLdouble *emaitza=0;
     emaitza =(GLdouble*)malloc(sizeof(GLdouble)*16);
@@ -22,7 +21,7 @@ GLdouble* matrix_multiplication(GLdouble* m1, GLdouble* m2){
         for(int j=0;j<4;j++){
                 float bat = 0.0;
                 for (int k = 0; k < 4; k++){
-                    bat = bat + m1[i * 4 + k] * m2[k * 4 +j];
+                    bat += m1[i * 4 + k] * m2[k * 4 +j];
                 }
                 emaitza[i * 4 +j] = bat;
         }
@@ -93,7 +92,7 @@ GLdouble* matrix_move(char axis, int direction){
     }
     return m;
 }
-/* GLdouble* matrix_rotate(char axis, int direction){
+GLdouble* matrix_rotate(char axis, int direction){
 
     char* msg = malloc(sizeof(char)*20);
     sprintf(msg,direction>0?"%c+ biratzen":"%c- biratzen",axis);
@@ -104,19 +103,79 @@ GLdouble* matrix_move(char axis, int direction){
 
     switch (axis){
         case 'x': case 'X':
-            m[12] = direction*KG_STEP_MOVE;
+                m[5] = (direction == 1) ? (cos(2*KG_STEP_ROTATE)+1) / (2*cos(KG_STEP_ROTATE)) : cos(KG_STEP_ROTATE);
+                m[6] = (-direction)*sin(KG_STEP_ROTATE );
+                m[9] = (direction)*sin(KG_STEP_ROTATE );
+                m[10] = cos(KG_STEP_ROTATE );
             break;
         case 'y': case 'Y':
-            m[13] = direction*KG_STEP_MOVE;
+                m[0] = (direction == -1) ? (cos(2*KG_STEP_ROTATE)+1) / (2*cos(KG_STEP_ROTATE)) : cos(KG_STEP_ROTATE);
+                m[2] = (-direction)*sin(KG_STEP_ROTATE );
+                m[8] = (direction)*sin(KG_STEP_ROTATE );
+                m[10] = cos(KG_STEP_ROTATE );
             break;
         case 'z': case 'Z':
-            m[14] = direction*KG_STEP_MOVE;
+                m[0] = (direction == 1) ? (cos(2*KG_STEP_ROTATE)+1) / (2*cos(KG_STEP_ROTATE)) : cos(KG_STEP_ROTATE);
+                m[1] = (-direction)*sin(KG_STEP_ROTATE );
+                m[4] = (direction)*sin(KG_STEP_ROTATE );
+                m[5] = cos(KG_STEP_ROTATE );
             break;
         default:
             break;
     }
     return m;
-} */
+}
+GLdouble* matrix_rescale(char axis, int direction){
+
+    char* msg = malloc(sizeof(char)*20);
+    sprintf(msg,direction>0?"%c+ berreskalatzen":"%c- berreskalatzen",axis);
+    console_add(msg);
+
+    GLdouble* m= malloc(sizeof(GLdouble)*16);
+    m=identity_matrix();
+
+    switch (axis){
+        case 'x': case 'X':
+                m[5] = (direction == 1) ? 1/KG_STEP_ZOOM : KG_STEP_ZOOM;
+            break;
+        case 'y': case 'Y':
+                m[0] = (direction == 1) ? 1/KG_STEP_ZOOM : KG_STEP_ZOOM;
+            break;
+        case 'z': case 'Z':
+                m[10] = (direction == 1) ? 1/KG_STEP_ZOOM : KG_STEP_ZOOM;
+            break;
+        default:
+                m[5] = (direction == 1) ? 1/KG_STEP_ZOOM : KG_STEP_ZOOM;
+                m[0] = (direction == 1) ? 1/KG_STEP_ZOOM : KG_STEP_ZOOM;
+                m[10] = (direction == 1) ? 1/KG_STEP_ZOOM : KG_STEP_ZOOM;
+            break;
+    }
+    return m;
+}
+GLdouble* matrix_mirror(char axis){
+
+    char* msg = malloc(sizeof(char)*20);
+    sprintf(msg,"%c islatzen",axis);
+    console_add(msg);
+
+    GLdouble* m= malloc(sizeof(GLdouble)*16);
+    m=identity_matrix();
+
+    switch (axis){
+        case 'x': case 'X':
+                m[0] = -1;
+            break;
+        case 'y': case 'Y':
+                m[5] = -1;
+            break;
+        case 'z': case 'Z':
+                m[10] = -1;
+            break;
+        default:
+            break;
+    }
+    return m;
+}
 void stack_add(stack *s, int code, char egoera, char aldaketa){
     GLdouble* m= malloc(sizeof(GLdouble)*16);
     switch (code) {
@@ -126,32 +185,16 @@ void stack_add(stack *s, int code, char egoera, char aldaketa){
                 matrix_into_stack(peak(s),matrix_move('Z',-1.),s,aldaketa);
             }
             else if (egoera == 'm'){
-                console_add("Y+ mugitzen");
                 matrix_into_stack(peak(s),matrix_move('Y',1.),s,aldaketa);
             }
             else if (egoera == 'b'){
-                console_add("X+ biratzen");
-                m[0] = m[5] = m[10] = m[15] = 1.;
-                m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
-                m[5] = (cos(2*KG_STEP_ROTATE )+1)/(2*cos(KG_STEP_ROTATE ));
-                m[6] = -sin(KG_STEP_ROTATE );
-                m[9] = sin(KG_STEP_ROTATE );
-                m[10] = cos(KG_STEP_ROTATE );
-                matrix_into_stack(peak(s),m,s,aldaketa);
+                matrix_into_stack(peak(s),matrix_rotate('X',1.),s,aldaketa);
             }
             else if (egoera == 't'){
-                console_add("Y- reeskalatzen");
-                m[0] = m[5] = m[10] = m[15] = 1.;
-                m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
-                m[0] = KG_STEP_ZOOM;
-                matrix_into_stack(peak(s),m,s,aldaketa);
+                matrix_into_stack(peak(s),matrix_rescale('Y',-1.),s,aldaketa);
             }
             else if(egoera == 'o'){
-                console_add("Y islatzen");
-                m[0] = m[5] = m[10] = m[15] = 1.;
-                m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
-                m[5] = -1;
-                matrix_into_stack(peak(s),m,s,aldaketa);
+                matrix_into_stack(peak(s),matrix_mirror('Y'),s,aldaketa);
             }
             break;
         case 103:   /*DOWN*/
@@ -160,32 +203,17 @@ void stack_add(stack *s, int code, char egoera, char aldaketa){
                 matrix_into_stack(peak(s),matrix_move('Z',1.),s,aldaketa);
             }
             else if (egoera == 'm'){
-                console_add("Y- mugitzen");
                 matrix_into_stack(peak(s),matrix_move('Y',-1.),s,aldaketa);
             }
             else if (egoera == 'b'){
-                console_add("X- biratzen");
-                m[0] = m[5] = m[10] = m[15] = 1.;
-                m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
-                m[5] = cos(KG_STEP_ROTATE );
-                m[6] = sin(KG_STEP_ROTATE );
-                m[9] = -sin(KG_STEP_ROTATE );
-                m[10] = cos(KG_STEP_ROTATE );
-                matrix_into_stack(peak(s),m,s,aldaketa);
+                matrix_into_stack(peak(s),matrix_rotate('X',-1.),s,aldaketa);
             }
             else if (egoera == 't'){
-                console_add("Y+ reeskalatzen");
-                m[0] = m[5] = m[10] = m[15] = 1.;
-                m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
-                m[0] = 1/KG_STEP_ZOOM;
-                matrix_into_stack(peak(s),m,s,aldaketa);
+                matrix_into_stack(peak(s),matrix_rescale('Y',1.),s,aldaketa);
             }
             else if(egoera == 'o'){
                 console_add("Y islatzen");
-                m[0] = m[5] = m[10] = m[15] = 1.;
-                m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
-                m[5] = -1;
-                matrix_into_stack(peak(s),m,s,aldaketa);
+                matrix_into_stack(peak(s),matrix_mirror('Y'),s,aldaketa);
             }
             break;
         case 100:   /*LEFT*/
@@ -197,160 +225,71 @@ void stack_add(stack *s, int code, char egoera, char aldaketa){
                 matrix_into_stack(peak(s),matrix_move('X',-1.),s,aldaketa);
             }
             else if (egoera == 'b'){
-                console_add("Y- biratzen");
-                m[0] = m[5] = m[10] = m[15] = 1.;
-                m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
-                m[0] = (cos(2*KG_STEP_ROTATE )+1)/(2*cos(KG_STEP_ROTATE ));
-                m[2] = sin(KG_STEP_ROTATE );
-                m[8] = -sin(KG_STEP_ROTATE );
-                m[10] = cos(KG_STEP_ROTATE );
-                matrix_into_stack(peak(s),m,s,aldaketa);
+                matrix_into_stack(peak(s),matrix_rotate('Y',-1.),s,aldaketa);
             }
             else if (egoera == 't'){
-                console_add("X+ reeskalatzen");
-                m[0] = m[5] = m[10] = m[15] = 1.;
-                m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
-                m[5] = KG_STEP_ZOOM;
-                matrix_into_stack(peak(s),m,s,aldaketa);
+                matrix_into_stack(peak(s),matrix_rescale('X',1.),s,aldaketa);
             }
             else if(egoera == 'o'){
-                console_add("X islatzen");
-                m[0] = m[5] = m[10] = m[15] = 1.;
-                m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
-                m[0] = -1;
-                matrix_into_stack(peak(s),m,s,aldaketa);
+                matrix_into_stack(peak(s),matrix_mirror('X'),s,aldaketa);
             }
             break;
         case 102:   /*RIGHT*/
-            if (camara_is_ibiltaria()==1)
-            {
+            if (camara_is_ibiltaria()==1){
                 matrix_into_stack(peak(s),matrix_move('X',1.),s,aldaketa);
             }
-            else if (egoera == 'm'){
+            else if (egoera == 'm'){}
                 matrix_into_stack(peak(s),matrix_move('X',1.),s,aldaketa);
             }
             else if (egoera == 'b'){
-                console_add("Y+ biratzen");
-                m[0] = m[5] = m[10] = m[15] = 1.;
-                m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
-                m[0] = cos(KG_STEP_ROTATE );
-                m[2] = -sin(KG_STEP_ROTATE );
-                m[8] = sin(KG_STEP_ROTATE );
-                m[10] = cos(KG_STEP_ROTATE );
-                matrix_into_stack(peak(s),m,s,aldaketa);
+                matrix_into_stack(peak(s),matrix_rotate('Y',1.),s,aldaketa);
             }
             else if (egoera == 't'){
-                console_add("X- reeskalatzen");
-                m[0] = m[5] = m[10] = m[15] = 1.;
-                m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
-                m[5] = 1/KG_STEP_ZOOM;
-                matrix_into_stack(peak(s),m,s,aldaketa);
+                matrix_into_stack(peak(s),matrix_rescale('X',-1.),s,aldaketa);
             }
             else if(egoera == 'o'){
-                console_add("X islatzen");
-                m[0] = m[5] = m[10] = m[15] = 1.;
-                m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
-                m[0] = -1;
-                matrix_into_stack(peak(s),m,s,aldaketa);
+                matrix_into_stack(peak(s),matrix_mirror('X'),s,aldaketa);
             }
             break;
         case 104:   /*REpag*/
-            if (camara_is_ibiltaria()==1)
-            {
-                console_add("X+ biratzen");
-                m[0] = m[5] = m[10] = m[15] = 1.;
-                m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
-                m[5] = (cos(2*KG_STEP_ROTATE )+1)/(2*cos(KG_STEP_ROTATE ));
-                m[6] = -sin(KG_STEP_ROTATE );
-                m[9] = sin(KG_STEP_ROTATE );
-                m[10] = cos(KG_STEP_ROTATE );
-                matrix_into_stack(peak(s),m,s,aldaketa);
+            if (camara_is_ibiltaria()==1){
+                matrix_into_stack(peak(s),matrix_rotate('X',1.),s,aldaketa);
             }
             else if (egoera == 'm'){
                 matrix_into_stack(peak(s),matrix_move('Z',1.),s,aldaketa);
             }
             else if (egoera == 'b'){
-                console_add("Z- biratzen");
-                m[0] = m[5] = m[10] = m[15] = 1.;
-                m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
-                m[0] = cos(KG_STEP_ROTATE );
-                m[1] = sin(KG_STEP_ROTATE );
-                m[4] = -sin(KG_STEP_ROTATE );
-                m[5] = cos(KG_STEP_ROTATE );
-                matrix_into_stack(peak(s),m,s,aldaketa);
+                matrix_into_stack(peak(s),matrix_rotate('Z',-1.),s,aldaketa);
             }
             else if (egoera == 't'){
-                console_add("Z+ reeskalatzen");
-                m[0] = m[5] = m[10] = m[15] = 1.;
-                m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
-                m[10] = KG_STEP_ZOOM;
-                matrix_into_stack(peak(s),m,s,aldaketa);
+                matrix_into_stack(peak(s),matrix_rescale('Z',1.),s,aldaketa);
             }
             else if(egoera == 'o'){
-                console_add("Z islatzen");
-                m[0] = m[5] = m[10] = m[15] = 1.;
-                m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
-                m[10] = -1;
-                matrix_into_stack(peak(s),m,s,aldaketa);
+                matrix_into_stack(peak(s),matrix_mirror('Z'),s,aldaketa);
             }
             break;
         case 105:   /*AVpag*/
-            if (camara_is_ibiltaria()==1)
-            {
-                console_add("X- biratzen");
-                m[0] = m[5] = m[10] = m[15] = 1.;
-                m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
-                m[5] = cos(KG_STEP_ROTATE );
-                m[6] = sin(KG_STEP_ROTATE );
-                m[9] = -sin(KG_STEP_ROTATE );
-                m[10] = cos(KG_STEP_ROTATE );
-                matrix_into_stack(peak(s),m,s,aldaketa);
+            if (camara_is_ibiltaria()==1){
+                matrix_into_stack(peak(s),matrix_rotate('X',-1.),s,aldaketa);
             }
             else if (egoera == 'm'){
                 matrix_into_stack(peak(s),matrix_move('Z',-1.),s,aldaketa);
             }
             else if (egoera == 'b'){
-                console_add("Z+ biratzen");
-                m[0] = m[5] = m[10] = m[15] = 1.;
-                m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
-                m[0] = (cos(2*KG_STEP_ROTATE )+1)/(2*cos(KG_STEP_ROTATE ));
-                m[1] = -sin(KG_STEP_ROTATE );
-                m[4] = sin(KG_STEP_ROTATE );
-                m[5] = cos(KG_STEP_ROTATE );
-                matrix_into_stack(peak(s),m,s,aldaketa);
+                matrix_into_stack(peak(s),matrix_rotate('Z',1.),s,aldaketa);
             }
             else if (egoera == 't'){
-                console_add("Z- reeskalatzen");
-                m[0] = m[5] = m[10] = m[15] = 1.;
-                m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
-                m[10] = 1/KG_STEP_ZOOM;
-                matrix_into_stack(peak(s),m,s,aldaketa);
+                matrix_into_stack(peak(s),matrix_rescale('Z',-1.),s,aldaketa);
             }
             else if(egoera == 'o'){
-                console_add("Z islatzen");
-                m[0] = m[5] = m[10] = m[15] = 1.;
-                m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
-                m[10] = -1;
-                matrix_into_stack(peak(s),m,s,aldaketa);
+                matrix_into_stack(peak(s),matrix_mirror('Z'),s,aldaketa);
             }
             break;
         case '+':
-            console_add("Reeskalaketa+ orokorra");
-            m[0] = m[5] = m[10] = m[15] = 1.;
-            m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
-            m[0] = 1/KG_STEP_ZOOM;
-            m[5] = 1/KG_STEP_ZOOM;
-            m[10] = 1/KG_STEP_ZOOM;
-            matrix_into_stack(peak(s),m,s,aldaketa);
+            matrix_into_stack(peak(s),matrix_rescale('G',1.),s,aldaketa);
             break;
         case '-':
-            console_add("Reeskalaketa- orokorra");
-            m[0] = m[5] = m[10] = m[15] = 1.;
-            m[1] = m[2] = m[3] = m[4] = m[6] = m[7] = m[8] = m[9] = m[11] = m[12] = m[13] = m[14] = 0.;
-            m[0] = KG_STEP_ZOOM;
-            m[5] = KG_STEP_ZOOM;
-            m[10] = KG_STEP_ZOOM;
-            matrix_into_stack(peak(s),m,s,aldaketa);
+            matrix_into_stack(peak(s),matrix_rescale('G',-1.),s,aldaketa);
             break;
         case 114:
             console_add("Orain Z,Y,+,- Sakatu");

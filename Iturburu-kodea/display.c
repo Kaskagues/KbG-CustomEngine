@@ -232,7 +232,7 @@ void display(void) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     if(camara_is_orthogonal()!=1){
-        egungo_bista = matrix_multiplication(hasierako_puntua,peak(camara_get_stack()));
+        egungo_bista = hasierako_puntua;//matrix_multiplication(hasierako_puntua,peak(camara_get_stack()));
         //glMultMatrixd(peak(camara_get_stack()));
         gluLookAt(egungo_bista[0],egungo_bista[1],egungo_bista[2],egungo_bista[4],egungo_bista[5],egungo_bista[6],egungo_bista[8],egungo_bista[9],egungo_bista[10]);
     }
@@ -256,9 +256,6 @@ void display(void) {
 
         /* Draw the object; for each face create a new polygon with the corresponding vertices */
         glLoadIdentity();
-        if(camara_is_orthogonal()!=1){
-            gluLookAt(egungo_bista[0],egungo_bista[1],egungo_bista[2],egungo_bista[4],egungo_bista[5],egungo_bista[6],egungo_bista[8],egungo_bista[9],egungo_bista[10]);
-        }
         glMultMatrixd(peak(aux_obj->s));
         for (f = 0; f < aux_obj->num_faces; f++) {
             glBegin(GL_POLYGON);  

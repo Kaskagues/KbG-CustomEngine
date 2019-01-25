@@ -149,12 +149,12 @@ typedef struct stack stack;
  * pile of 3D objects       *
  ****************************/
 struct object3d{
-    char *fitx_izena;                 /* objektuaren fitxategiaren izena*/
+    char *fitx_izena;                   /* objektuaren fitxategiaren izena*/
     GLint num_vertices;                 /* number of vertices in the object*/
     vertex *vertex_table;               /* table of vertices */
     GLint num_faces;                    /* number of faces in the object */
     face *face_table;                   /* table of faces */
-    vector3 *normal_table;                   /* table of normals of the faces above */
+    vector3 *normal_table;              /* table of normals of the faces above */
     point3 min;                         /* coordinates' lower bounds */
     point3 max;                         /* coordinates' bigger bounds */
     struct object3d *next;              /* next element in the pile of objects */
